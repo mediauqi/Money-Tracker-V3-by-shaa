@@ -183,7 +183,7 @@ export function ProfilePage({ onBack }: Props) {
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-1">
                 {user?.username}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Money Tracker User</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">LovePocket User</p>
             </div>
 
             {/* Stats */}
