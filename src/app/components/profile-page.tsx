@@ -288,6 +288,7 @@ const handleSaveBio = async () => {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="mt-2 p-4 backdrop-blur-xl bg-white/80 dark:bg-black/50 rounded-2xl border-2 border-pink-300/50 dark:border-pink-800/30 shadow-xl"
+                      style={{ pointerEvents: "auto" }}
                     >
                       <Textarea
                         value={bio}
@@ -298,8 +299,12 @@ const handleSaveBio = async () => {
                       />
                       <div className="flex gap-2">
                         <Button
+                          type="button"
                           size="sm"
-                          onClick={handleSaveBio}
+                          onClick={() => {
+                            console.log("SAVE CLICKED");
+                            handleSaveBio();
+                          }}
                           className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 h-10"
                         >
                           <Check className="w-4 h-4 mr-1" />
