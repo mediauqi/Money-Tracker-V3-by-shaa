@@ -89,10 +89,16 @@ export function ProfilePage({ onBack }: Props) {
     setIsEditingEmoji(false);
   };
 
-  const handleSaveBio = async () => {
-    await updateBio(bio);
-    setIsEditingBio(false);
-  };
+const handleSaveBio = async () => {
+  await updateBio(bio);
+
+  setUser((prev) => ({
+    ...prev,
+    bio: bio,
+  }));
+
+  setIsEditingBio(false);
+};
 
   const formatCurrency = (num: number) => {
     return new Intl.NumberFormat('id-ID', {
