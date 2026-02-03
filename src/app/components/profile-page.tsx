@@ -89,16 +89,10 @@ export function ProfilePage({ onBack }: Props) {
     setIsEditingEmoji(false);
   };
 
-const handleSaveBio = async () => {
-  await updateBio(bio);
-
-  setUser((prev) => ({
-    ...prev,
-    bio: bio,
-  }));
-
-  setIsEditingBio(false);
-};
+  const handleSaveBio = async () => {
+    await updateBio(bio);
+    setIsEditingBio(false);
+  };
 
   const formatCurrency = (num: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -288,7 +282,6 @@ const handleSaveBio = async () => {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="mt-2 p-4 backdrop-blur-xl bg-white/80 dark:bg-black/50 rounded-2xl border-2 border-pink-300/50 dark:border-pink-800/30 shadow-xl"
-                      style={{ pointerEvents: "auto" }}
                     >
                       <Textarea
                         value={bio}
@@ -299,12 +292,8 @@ const handleSaveBio = async () => {
                       />
                       <div className="flex gap-2">
                         <Button
-                          type="button"
                           size="sm"
-                          onClick={() => {
-                            console.log("SAVE CLICKED");
-                            handleSaveBio();
-                          }}
+                          onClick={handleSaveBio}
                           className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 h-10"
                         >
                           <Check className="w-4 h-4 mr-1" />
