@@ -40,7 +40,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="h-screen overflow-hidden flex items-center justify-center p-4 bg-gradient-to-br from-rose-400 via-pink-400 to-fuchsia-500 dark:from-rose-900 dark:via-pink-900 dark:to-fuchsia-900">
+    <div className="min-h-screen overflow-y-auto flex items-center justify-center p-4 bg-gradient-to-br from-pink-400 via-rose-400 to-pink-500 dark:from-pink-950 dark:via-black dark:to-rose-950">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -76,7 +76,7 @@ export function LoginPage() {
         className="w-full max-w-md relative z-10"
       >
         {/* Glass morphism card */}
-        <div className="backdrop-blur-2xl bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10 rounded-3xl shadow-2xl p-8">
+        <div className="backdrop-blur-2xl bg-white/20 dark:bg-black/30 border-2 border-white/30 dark:border-pink-800/30 rounded-3xl shadow-2xl p-8 my-4">
           {/* Logo/Header */}
           <div className="text-center mb-8">
             <motion.div

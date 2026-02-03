@@ -3,7 +3,7 @@ import { useAuth } from '@/app/components/auth-context';
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 import { Textarea } from '@/app/components/ui/textarea';
-import { ArrowLeft, TrendingUp, TrendingDown, Wallet, Edit2, Check, X } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Heart, Edit2, Check, X, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { projectId, publicAnonKey } from '/utils/supabase/info';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -40,12 +40,13 @@ export function ProfilePage({ onBack }: Props) {
   const [isEditingEmoji, setIsEditingEmoji] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState(user?.emoji || '😊');
   const [isEditingBio, setIsEditingBio] = useState(false);
-  const [bio, setBio] = useState(user?.bio || 'Money Tracker User');
+  const [bio, setBio] = useState(user?.bio || '');
 
   useEffect(() => {
     if (user) {
       fetchProfile();
       fetchTransactions();
+      setBio(user.bio || '');
     }
   }, [user]);
 
@@ -101,7 +102,6 @@ export function ProfilePage({ onBack }: Props) {
     }).format(num);
   };
 
-  // Prepare chart data - Bar Chart
   const chartData = transactions
     .slice()
     .reverse()
@@ -112,232 +112,316 @@ export function ProfilePage({ onBack }: Props) {
     }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-100 dark:from-gray-900 dark:via-rose-950 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-white to-rose-100 dark:from-gray-950 dark:via-pink-950 dark:to-black relative overflow-hidden">
+      {/* Animated background gradient orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute -top-20 -left-20 w-96 h-96 bg-gradient-to-br from-pink-300/30 to-rose-300/30 dark:from-pink-600/20 dark:to-rose-600/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, 50, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute top-1/3 -right-20 w-96 h-96 bg-gradient-to-br from-rose-300/30 to-pink-300/30 dark:from-rose-600/20 dark:to-pink-600/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, -100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
       {/* Header */}
-      <div className="backdrop-blur-xl bg-white/40 dark:bg-black/40 border-b border-white/50 dark:border-white/10 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16 sm:h-20">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onBack}
-              className="hover:bg-white/50 dark:hover:bg-black/50"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white ml-3">Profile</h1>
+      <div className="sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mt-4 mb-6">
+        <div className="max-w-4xl mx-auto backdrop-blur-2xl bg-white/40 dark:bg-black/40 border-2 border-pink-200/50 dark:border-pink-800/30 rounded-3xl shadow-2xl shadow-pink-200/20 dark:shadow-pink-900/20">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center h-16 sm:h-20">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onBack}
+                className="hover:bg-pink-100/50 dark:hover:bg-pink-900/30 rounded-xl"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-pink-600 via-rose-500 to-pink-600 dark:from-pink-400 dark:via-rose-400 dark:to-pink-400 bg-clip-text text-transparent ml-3">
+                My Profile
+              </h1>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Profile card */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 relative z-10">
+        {/* Profile card - Hero Style */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 sm:mb-8"
         >
-          <Card className="p-6 sm:p-8 backdrop-blur-xl bg-gradient-to-br from-white/60 to-purple-100/40 dark:from-black/40 dark:to-purple-900/20 border-white/50 dark:border-white/10 shadow-2xl text-center">
-            {/* Profile emoji */}
-            <div className="flex flex-col items-center mb-6">
-              <div className="relative">
-                <div className="flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-rose-400 to-pink-500 rounded-3xl text-6xl sm:text-7xl shadow-2xl mb-4">
-                  {user?.emoji}
-                </div>
-                <Button
-                  size="icon"
-                  onClick={() => setIsEditingEmoji(!isEditingEmoji)}
-                  className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg"
-                >
-                  <Edit2 className="w-4 h-4" />
-                </Button>
-              </div>
-
-              {/* Emoji picker */}
-              {isEditingEmoji && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mt-4 p-4 backdrop-blur-xl bg-white/50 dark:bg-black/30 rounded-2xl border border-white/50 dark:border-white/10 shadow-xl max-w-md max-h-80 overflow-y-auto scrollbar-hide"
-                >
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">Pilih emoji baru:</p>
-                  <div className="grid grid-cols-5 gap-2 mb-4">
-                    {emojiList.map((emoji, index) => (
-                      <button
-                        key={`${emoji}-${index}`}
-                        onClick={() => setSelectedEmoji(emoji)}
-                        className={`text-3xl p-3 rounded-xl transition-all hover:scale-110 ${
-                          selectedEmoji === emoji
-                            ? 'bg-purple-500/40 scale-110 shadow-lg'
-                            : 'bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30'
-                        }`}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handleSaveEmoji}
-                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+          <div className="relative overflow-hidden backdrop-blur-2xl bg-gradient-to-br from-white/70 via-pink-50/70 to-rose-50/70 dark:from-black/50 dark:via-pink-950/50 dark:to-rose-950/50 border-2 border-pink-300/50 dark:border-pink-800/30 rounded-3xl p-8 sm:p-12 shadow-2xl shadow-pink-200/30 dark:shadow-pink-900/20">
+            {/* Decorative background elements */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-pink-300/30 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-rose-300/30 to-transparent rounded-full blur-3xl"></div>
+            
+            <div className="relative z-10 text-center">
+              {/* Profile emoji */}
+              <div className="flex flex-col items-center mb-8">
+                <div className="relative mb-6">
+                  <motion.div 
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    className="relative flex items-center justify-center w-36 h-36 sm:w-40 sm:h-40 bg-gradient-to-br from-pink-400 via-rose-400 to-pink-500 rounded-3xl text-7xl sm:text-8xl shadow-2xl shadow-pink-400/50 dark:shadow-pink-700/50"
+                  >
+                    {user?.emoji}
+                    <motion.div
+                      className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full"
+                      animate={{ scale: [1, 1.3, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
                     >
-                      <Check className="w-4 h-4 mr-2" />
-                      Simpan
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setIsEditingEmoji(false);
-                        setSelectedEmoji(user?.emoji || '😊');
-                      }}
-                      variant="outline"
-                      className="flex-1 bg-white/50 dark:bg-black/30"
-                    >
-                      Batal
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-1">
-                {user?.username}
-              </h2>
-              
-              {/* Custom Bio Section */}
-              <div className="relative max-w-sm mx-auto">
-                {!isEditingBio ? (
-                  <div className="flex items-center justify-center gap-2 group">
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      {user?.bio || 'Money Tracker User'}
-                    </p>
+                      <Sparkles className="w-5 h-5 text-white m-auto mt-1.5" />
+                    </motion.div>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.15, rotate: 10 }} whileTap={{ scale: 0.95 }}>
                     <Button
                       size="icon"
-                      variant="ghost"
-                      onClick={() => {
-                        setIsEditingBio(true);
-                        setBio(user?.bio || '');
-                      }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6"
+                      onClick={() => setIsEditingEmoji(!isEditingEmoji)}
+                      className="absolute -bottom-2 -right-2 w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:via-rose-600 hover:to-pink-700 shadow-xl shadow-pink-400/50"
                     >
-                      <Edit2 className="w-3 h-3" />
+                      <Edit2 className="w-5 h-5" />
                     </Button>
-                  </div>
-                ) : (
+                  </motion.div>
+                </div>
+
+                {/* Emoji picker */}
+                {isEditingEmoji && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="mt-2 p-3 backdrop-blur-xl bg-white/50 dark:bg-black/30 rounded-xl border border-white/50 dark:border-white/10 shadow-lg"
+                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    className="mb-6 p-6 backdrop-blur-xl bg-white/80 dark:bg-black/50 rounded-3xl border-2 border-pink-300/50 dark:border-pink-800/30 shadow-2xl max-w-md w-full"
                   >
-                    <Textarea
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                      placeholder="Tulis bio kamu..."
-                      className="mb-2 bg-white/70 dark:bg-black/50 border-white/50 dark:border-white/10 text-sm min-h-[60px] resize-none"
-                      maxLength={100}
-                    />
-                    <div className="flex gap-2">
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">Choose your emoji:</p>
+                    <div className="grid grid-cols-5 gap-2 mb-5 max-h-60 overflow-y-auto scrollbar-hide">
+                      {emojiList.map((emoji, index) => (
+                        <motion.button
+                          key={`${emoji}-${index}`}
+                          whileHover={{ scale: 1.2, rotate: 10 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setSelectedEmoji(emoji)}
+                          className={`text-3xl p-3 rounded-2xl transition-all ${
+                            selectedEmoji === emoji
+                              ? 'bg-gradient-to-br from-pink-400 to-rose-500 shadow-xl scale-110'
+                              : 'bg-pink-100/60 dark:bg-pink-900/30 hover:bg-pink-200/70 dark:hover:bg-pink-900/40'
+                          }`}
+                        >
+                          {emoji}
+                        </motion.button>
+                      ))}
+                    </div>
+                    <div className="flex gap-3">
                       <Button
-                        size="sm"
-                        onClick={handleSaveBio}
-                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                        onClick={handleSaveEmoji}
+                        className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg h-11"
                       >
-                        <Check className="w-3 h-3 mr-1" />
-                        Simpan
+                        <Check className="w-4 h-4 mr-2" />
+                        Save
                       </Button>
                       <Button
-                        size="sm"
                         onClick={() => {
-                          setIsEditingBio(false);
-                          setBio(user?.bio || '');
+                          setIsEditingEmoji(false);
+                          setSelectedEmoji(user?.emoji || '😊');
                         }}
                         variant="outline"
-                        className="flex-1 bg-white/50 dark:bg-black/30"
+                        className="flex-1 bg-white/70 dark:bg-black/50 border-2 border-pink-300/50 dark:border-pink-800/30 h-11"
                       >
-                        <X className="w-3 h-3 mr-1" />
-                        Batal
+                        Cancel
                       </Button>
                     </div>
                   </motion.div>
                 )}
+
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-3">
+                  {user?.username}
+                </h2>
+                
+                {/* Custom Bio Section */}
+                <div className="w-full max-w-md mx-auto">
+                  {!isEditingBio ? (
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      className="flex items-center justify-center gap-2 group min-h-[32px] px-4 py-2 rounded-full bg-pink-100/50 dark:bg-pink-900/30 border border-pink-200/50 dark:border-pink-800/30"
+                    >
+                      <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
+                        {user?.bio || '✨ Click to add your bio'}
+                      </p>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => {
+                          setIsEditingBio(true);
+                          setBio(user?.bio || '');
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity w-7 h-7 rounded-full hover:bg-pink-200/50 dark:hover:bg-pink-900/50"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="mt-2 p-4 backdrop-blur-xl bg-white/80 dark:bg-black/50 rounded-2xl border-2 border-pink-300/50 dark:border-pink-800/30 shadow-xl"
+                    >
+                      <Textarea
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        placeholder="Write your bio..."
+                        className="mb-3 bg-white/90 dark:bg-black/60 border-2 border-pink-200/50 dark:border-pink-800/30 text-sm min-h-[70px] resize-none text-center rounded-xl"
+                        maxLength={100}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={handleSaveBio}
+                          className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 h-10"
+                        >
+                          <Check className="w-4 h-4 mr-1" />
+                          Save
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setIsEditingBio(false);
+                            setBio(user?.bio || '');
+                          }}
+                          variant="outline"
+                          className="flex-1 bg-white/70 dark:bg-black/50 border-2 border-pink-300/50 dark:border-pink-800/30 h-10"
+                        >
+                          <X className="w-4 h-4 mr-1" />
+                          Cancel
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+
+              {/* Stats - Modern Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mt-10">
+                <motion.div 
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-pink-200/70 via-rose-200/70 to-pink-300/70 dark:from-pink-900/30 dark:via-rose-900/30 dark:to-pink-800/30 border-2 border-pink-300/60 dark:border-pink-700/40 shadow-xl"
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="absolute top-3 right-3"
+                  >
+                    <Heart className="w-7 h-7 text-pink-600/30 dark:text-pink-400/30 fill-current" />
+                  </motion.div>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">Current Balance</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                    {formatCurrency(balance.balance)}
+                  </p>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-pink-100/70 via-rose-100/70 to-pink-200/70 dark:from-pink-900/25 dark:via-rose-900/25 dark:to-pink-800/25 border-2 border-pink-200/50 dark:border-pink-700/30 shadow-lg"
+                >
+                  <motion.div
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute top-3 right-3"
+                  >
+                    <TrendingUp className="w-6 h-6 text-pink-600/40 dark:text-pink-400/40" />
+                  </motion.div>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">Total Income</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                    {formatCurrency(balance.totalIncome)}
+                  </p>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-rose-100/70 via-pink-100/70 to-rose-200/70 dark:from-rose-900/25 dark:via-pink-900/25 dark:to-rose-800/25 border-2 border-rose-200/50 dark:border-rose-700/30 shadow-lg"
+                >
+                  <motion.div
+                    animate={{ y: [0, 5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute top-3 right-3"
+                  >
+                    <TrendingDown className="w-6 h-6 text-rose-600/40 dark:text-rose-400/40" />
+                  </motion.div>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">Total Expenses</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                    {formatCurrency(balance.totalExpenses)}
+                  </p>
+                </motion.div>
               </div>
             </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-8">
-              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-yellow-400/30 to-orange-400/30 dark:from-yellow-600/20 dark:to-orange-600/20 border border-white/50 dark:border-white/10">
-                <div className="flex items-center justify-center mb-2">
-                  <Wallet className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-                </div>
-                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-1">Saldo Saat Ini</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
-                  {formatCurrency(balance.balance)}
-                </p>
-              </div>
-
-              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-green-400/30 to-emerald-400/30 dark:from-green-600/20 dark:to-emerald-600/20 border border-white/50 dark:border-white/10">
-                <div className="flex items-center justify-center mb-2">
-                  <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </div>
-                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-1">Total Pemasukan</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
-                  {formatCurrency(balance.totalIncome)}
-                </p>
-              </div>
-
-              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-red-400/30 to-pink-400/30 dark:from-red-600/20 dark:to-pink-600/20 border border-white/50 dark:border-white/10">
-                <div className="flex items-center justify-center mb-2">
-                  <TrendingDown className="w-6 h-6 text-red-600 dark:text-red-400" />
-                </div>
-                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-1">Total Pengeluaran</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
-                  {formatCurrency(balance.totalExpenses)}
-                </p>
-              </div>
-            </div>
-          </Card>
+          </div>
         </motion.div>
 
-        {/* Chart - Bar Chart */}
+        {/* Chart - Modern Card */}
         {chartData.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            className="mb-6 sm:mb-8"
           >
-            <Card className="p-4 sm:p-6 backdrop-blur-xl bg-white/50 dark:bg-black/30 border-white/50 dark:border-white/10 shadow-xl">
-              <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-gray-800 dark:text-white">
-                Grafik Transaksi Terakhir
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#444' : '#ccc'} opacity={0.3} />
-                  <XAxis 
-                    dataKey="date" 
-                    stroke={theme === 'dark' ? '#fff' : '#000'} 
-                    fontSize={12}
-                    tickLine={false}
-                  />
-                  <YAxis 
-                    stroke={theme === 'dark' ? '#fff' : '#000'}
-                    fontSize={12}
-                    tickLine={false}
-                    tickFormatter={(value) => `${(value / 1000)}k`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: theme === 'dark' ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.95)',
-                      border: 'none',
-                      borderRadius: '12px',
-                      color: theme === 'dark' ? '#fff' : '#000',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    }}
-                    formatter={(value: number) => formatCurrency(value)}
-                  />
-                  <Legend />
-                  <Bar dataKey="Pemasukan" fill="#10b981" radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="Pengeluaran" fill="#ef4444" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
+            <div className="relative overflow-hidden backdrop-blur-2xl bg-gradient-to-br from-white/70 via-rose-50/60 to-white/70 dark:from-black/50 dark:via-rose-950/40 dark:to-black/50 border-2 border-pink-200/50 dark:border-pink-800/30 rounded-3xl p-6 sm:p-8 shadow-2xl">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-rose-300/20 to-transparent rounded-full blur-3xl" />
+              
+              <div className="relative z-10">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                  <Heart className="w-6 h-6 text-pink-500 fill-pink-500" />
+                  Recent Transactions
+                </h3>
+                <ResponsiveContainer width="100%" height={340}>
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#444' : '#e5e5e5'} opacity={0.3} />
+                    <XAxis 
+                      dataKey="date" 
+                      stroke={theme === 'dark' ? '#fff' : '#000'} 
+                      fontSize={12}
+                      tickLine={false}
+                    />
+                    <YAxis 
+                      stroke={theme === 'dark' ? '#fff' : '#000'}
+                      fontSize={12}
+                      tickLine={false}
+                      tickFormatter={(value) => `${(value / 1000)}k`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: theme === 'dark' ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)',
+                        border: 'none',
+                        borderRadius: '16px',
+                        color: theme === 'dark' ? '#fff' : '#000',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                      }}
+                      formatter={(value: number) => formatCurrency(value)}
+                    />
+                    <Legend />
+                    <Bar dataKey="Pemasukan" fill="#ec4899" radius={[12, 12, 0, 0]} />
+                    <Bar dataKey="Pengeluaran" fill="#f43f5e" radius={[12, 12, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -346,10 +430,11 @@ export function ProfilePage({ onBack }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 p-4 backdrop-blur-xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 dark:from-blue-600/20 dark:to-purple-600/20 border border-white/50 dark:border-white/10 rounded-2xl"
+          className="backdrop-blur-xl bg-gradient-to-r from-pink-200/50 via-rose-200/50 to-pink-200/50 dark:from-pink-900/30 dark:via-rose-900/30 dark:to-pink-900/30 border-2 border-pink-300/50 dark:border-pink-800/30 rounded-2xl p-5 shadow-lg"
         >
-          <p className="text-center text-sm text-gray-700 dark:text-gray-300">
-            💡 <strong>Tip:</strong> Screenshot halaman ini untuk menyimpan summary keuangan kamu dengan tampilan yang rapih dan menarik!
+          <p className="text-center text-sm text-gray-700 dark:text-gray-300 flex items-center justify-center gap-2">
+            <Sparkles className="w-4 h-4 text-pink-500" />
+            <strong>Tip:</strong> Screenshot this page to save your beautiful financial summary!
           </p>
         </motion.div>
       </div>

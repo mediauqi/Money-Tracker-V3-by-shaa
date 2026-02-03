@@ -46,11 +46,7 @@ const budgetRatios: BudgetRatio[] = [
   },
 ];
 
-type Props = {
-  onClose: () => void;
-};
-
-export function BudgetCalculator({ onClose }: Props) {
+export function BudgetCalculator() {
   const [income, setIncome] = useState('');
   const [selectedRatio, setSelectedRatio] = useState(budgetRatios[0]);
 
@@ -75,31 +71,11 @@ export function BudgetCalculator({ onClose }: Props) {
 
   return (
     <div className="h-full overflow-y-auto scrollbar-hide">
-      <Card className="h-full min-h-screen sm:min-h-0 sm:max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-hide p-4 sm:p-6 backdrop-blur-xl bg-white/90 dark:bg-black/90 border-white/50 dark:border-white/10 shadow-2xl sm:rounded-2xl rounded-none">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
-              <Calculator className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-gray-800 dark:text-white">Budget Calculator</h2>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Hitung budget idealmu</p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="hover:bg-white/50 dark:hover:bg-black/50"
-          >
-            <X className="w-5 h-5" />
-          </Button>
-        </div>
+      <div className="space-y-4">
 
         {/* Income input */}
-        <div className="space-y-2 mb-6">
-          <Label htmlFor="calc-income" className="text-gray-700 dark:text-gray-200 font-medium">
+        <Card className="p-4 backdrop-blur-xl bg-white/70 dark:bg-black/40 border-2 border-pink-200/50 dark:border-pink-800/30 shadow-lg">
+          <Label htmlFor="calc-income" className="text-gray-700 dark:text-gray-200 font-medium mb-2 block">
             Penghasilan Bulanan
           </Label>
           <Input
@@ -108,13 +84,13 @@ export function BudgetCalculator({ onClose }: Props) {
             value={income}
             onChange={(e) => setIncome(e.target.value)}
             placeholder="Masukkan penghasilan"
-            className="bg-white/70 dark:bg-black/50 border-white/50 dark:border-white/10 text-lg"
+            className="bg-white/80 dark:bg-black/50 border-pink-200/50 dark:border-pink-800/30 text-lg"
           />
-        </div>
+        </Card>
 
         {/* Ratio selection */}
-        <div className="space-y-3 mb-6">
-          <Label className="text-gray-700 dark:text-gray-200 font-medium flex items-center gap-2">
+        <Card className="p-4 backdrop-blur-xl bg-white/70 dark:bg-black/40 border-2 border-pink-200/50 dark:border-pink-800/30 shadow-lg">
+          <Label className="text-gray-700 dark:text-gray-200 font-medium flex items-center gap-2 mb-3">
             Pilih Rasio Budget
             <Info className="w-4 h-4 text-gray-500" />
           </Label>
@@ -127,8 +103,8 @@ export function BudgetCalculator({ onClose }: Props) {
                 onClick={() => setSelectedRatio(ratio)}
                 className={`w-full p-3 rounded-xl text-left transition-all ${
                   selectedRatio.name === ratio.name
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                    : 'bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30 text-gray-800 dark:text-white border border-white/30 dark:border-white/10'
+                    ? 'bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 text-white shadow-lg'
+                    : 'bg-pink-50/50 dark:bg-pink-900/10 hover:bg-pink-100/60 dark:hover:bg-pink-900/20 text-gray-800 dark:text-white border-2 border-pink-200/40 dark:border-pink-800/20'
                 }`}
               >
                 <div className="flex items-start gap-2">
@@ -147,16 +123,17 @@ export function BudgetCalculator({ onClose }: Props) {
               </motion.button>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Results */}
         {income && parseFloat(income) > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
-          >
-            <h3 className="font-bold text-gray-800 dark:text-white mb-3">Hasil Perhitungan:</h3>
+          <Card className="p-4 backdrop-blur-xl bg-white/70 dark:bg-black/40 border-2 border-pink-200/50 dark:border-pink-800/30 shadow-lg">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-3"
+            >
+              <h3 className="font-bold text-gray-800 dark:text-white mb-3">Hasil Perhitungan:</h3>
             
             {/* Needs */}
             <div className="p-4 rounded-xl bg-gradient-to-br from-blue-400/20 to-blue-500/20 dark:from-blue-600/20 dark:to-blue-700/20 border border-white/30 dark:border-white/10">
@@ -202,13 +179,14 @@ export function BudgetCalculator({ onClose }: Props) {
                 Untuk masa depan, dana darurat, investasi
               </p>
             </div>
-          </motion.div>
+            </motion.div>
+          </Card>
         )}
 
         {/* Insight box */}
-        <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-yellow-400/20 to-orange-400/20 dark:from-yellow-600/20 dark:to-orange-600/20 border border-white/30 dark:border-white/10">
+        <Card className="p-4 backdrop-blur-xl bg-gradient-to-r from-pink-200/40 via-rose-200/40 to-pink-200/40 dark:from-pink-900/20 dark:via-rose-900/20 dark:to-pink-900/20 border-2 border-pink-300/50 dark:border-pink-800/30 shadow-lg">
           <div className="flex items-start gap-2">
-            <Info className="w-5 h-5 text-yellow-700 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+            <Info className="w-5 h-5 text-pink-700 dark:text-pink-400 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-gray-700 dark:text-gray-300">
               <p className="font-semibold mb-1">💡 Tips Memilih Rasio:</p>
               <ul className="space-y-1 list-disc list-inside">
@@ -219,8 +197,8 @@ export function BudgetCalculator({ onClose }: Props) {
               </ul>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }

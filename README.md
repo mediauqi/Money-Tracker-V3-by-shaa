@@ -1,7 +1,7 @@
 
-  # Personal Finance Tracking Website
+  # Personal Finance Tracking Website_v2
 
-  This is a code bundle for Personal Finance Tracking Website. The original project is available at https://www.figma.com/design/DYnrBieF8Wl9a5NoIBvWlR/Personal-Finance-Tracking-Website.
+  This is a code bundle for Personal Finance Tracking Website_v2. The original project is available at https://www.figma.com/design/MpAfTO5REfsKwnzd2DfhAq/Personal-Finance-Tracking-Website_v2.
 
   ## Running the code
 
